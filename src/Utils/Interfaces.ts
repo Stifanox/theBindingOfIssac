@@ -74,3 +74,12 @@ export interface AnimationObject{
     offsetXStart:number
     animationName:string
 }
+
+export interface PlayerStats{
+    damage:number;
+    tears:number;
+    range:number;
+    shotSpeed:number;
+    speed:number;
+    
+}

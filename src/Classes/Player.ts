@@ -5,6 +5,7 @@ import { KeyboardControler } from "./KeyboardControler";
 import { MovementActionObject, ShotActionObject } from "../Utils/Actions";
 import { AnimationObjectCreate } from "./AnimationObjectCreate";
 import { PlayfieldSize } from "../Utils/PlayfiledSize";
+import { Tear } from "./Tear";
 
 /**
  * Main class of player.
@@ -24,9 +25,12 @@ export class Player implements EntityInterface,FaceEntity{
     y: number;
     headWidth:number;
     headHeight:number;
+    tears:Tear[]
+    playerStats:Object
     movementObject: Actions; // Jest tutaj aby nie wywalało błędu, dla playera nie ma potrzeby bo ma obiekt globalny
 
-    constructor() {
+    constructor(tears:Tear[]) {
+        this.tears= tears
         this.x = 10
         this.y = 200
         this.vy = 0.3
@@ -76,6 +80,7 @@ export class Player implements EntityInterface,FaceEntity{
         else if(ShotActionObject.LEFT) this.headSource.update(delta,"shotTearLeft")
         else if(ShotActionObject.RIGHT) this.headSource.update(delta,"shotTearRight")
         else this.headSource.update(delta)
+
 
     }
 }
