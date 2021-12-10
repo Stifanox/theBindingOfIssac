@@ -21,14 +21,19 @@ export interface Animation{
  * @extends Position 
  * @extends Animation
  */
-export interface EntityInterface extends Position, Animation{
+export interface EntityInterface extends Position, Animation,Hitbox{
     vx:number
     vy:number
     imageSource:SpriteAnimator
-    hitboxWidth:number
-    hitboxHeight:number
     width:number
     height:number
+}
+
+export interface Hitbox{
+    hitboxWidth:number
+    hitboxHeight:number
+    hitboxX:number
+    hitboxY:number
 }
 
 export interface FaceEntity{
@@ -80,6 +85,9 @@ export interface PlayerStats{
     tears:number;
     range:number;
     shotSpeed:number;
-    speed:number;
-    
+    speed:number;   
+}
+
+export interface Removeable{
+    markForDeletion:boolean
 }

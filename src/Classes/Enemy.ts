@@ -1,8 +1,10 @@
-import { EntityInterface, FaceEntity } from "../Utils/Interfaces";
+import { EntityInterface, FaceEntity, Removeable } from "../Utils/Interfaces";
 import { SpriteAnimator } from "./SpriteAnimator";
 
 //TODO: zrobić klasę faceEnemy
-export class Enemy implements EntityInterface{
+//TODO: zrobić metodę która będzie odejmować zdrowie przeciwnika 
+export class Enemy implements EntityInterface,Removeable{
+    markForDeletion: boolean;
     vx: number;
     vy: number;
     imageSource: SpriteAnimator;
@@ -12,6 +14,8 @@ export class Enemy implements EntityInterface{
     height: number;
     x: number;
     y: number;
+    hitboxX: number;
+    hitboxY: number;
 
     constructor(vx: number, vy: number, imageSource: SpriteAnimator, hitboxWidth: number, hitboxHeight: number,width: number, height: number, x: number, y: number) {
             this.vx=vx
@@ -24,6 +28,7 @@ export class Enemy implements EntityInterface{
             this.x=x
             this.y=y
     }
+  
 
     draw(ctx?: CanvasRenderingContext2D): void {
         this.imageSource.draw(ctx,this.x,this.y,this.width,this.height)

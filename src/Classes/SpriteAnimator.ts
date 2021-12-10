@@ -47,7 +47,7 @@ export class SpriteAnimator implements SpriteAnimation{
         
         if(action == "none"){
             this.setCurrentAnimation(this.animationArray[0].animationName)
-            this.frameX =0 
+            this.frameX = 0
             this.internalTimer = 0
             return
         }else{
@@ -60,7 +60,7 @@ export class SpriteAnimator implements SpriteAnimation{
             this.frameX++
             this.internalTimer = 0
         }
-        if(this.frameX > this.frames)this.frameX = 0      
+        if(this.frameX > this.frames) this.frameX = 0   
     }
 
     /**
@@ -73,8 +73,7 @@ export class SpriteAnimator implements SpriteAnimation{
      * @param MovementActionObject object that informs the transformation of entity. If entity is directed at left the canvas is flipped to match to direction of walking.
      */
     draw(ctx:CanvasRenderingContext2D,x:number,y:number,width:number,height:number):void{
-        //FIXME:Możliwe że wartość 32 będzie musiała ustawiana dynamicznie
-            ctx.drawImage(this.imageSource,this.offsetXStart + (this.frameX * this.offsetOfFrame),this.offsetYStart,this.spriteWidth,this.spriteHeight,x,y,width,height)            
+        ctx.drawImage(this.imageSource,this.offsetXStart + (this.frameX * this.offsetOfFrame),this.offsetYStart,this.spriteWidth,this.spriteHeight,x,y,width,height)            
     }
 
     private setCurrentAnimation(action:string):void{
@@ -90,4 +89,6 @@ export class SpriteAnimator implements SpriteAnimation{
         this.offsetXStart = animationObject.offsetXStart
 
     }
+
+    //TODO:napisać metodę która będzie zmieniać wartość szybkości odgrywania animacji
 }

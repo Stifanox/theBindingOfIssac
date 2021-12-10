@@ -1,11 +1,11 @@
-import { Actions, EntityInterface, FaceEntity} from "../Utils/Interfaces";
+import { Actions, EntityInterface, FaceEntity, PlayerStats} from "../Utils/Interfaces";
 import { SpriteAnimator } from "./SpriteAnimator";
 import issac from "../../Img/Issac_Sprite.png"
-import { KeyboardControler } from "./KeyboardControler";
 import { MovementActionObject, ShotActionObject } from "../Utils/Actions";
 import { AnimationObjectCreate } from "./AnimationObjectCreate";
 import { PlayfieldSize } from "../Utils/PlayfiledSize";
 import { Tear } from "./Tear";
+import { TearManager } from "./TearManager";
 
 /**
  * Main class of player.
@@ -25,23 +25,32 @@ export class Player implements EntityInterface,FaceEntity{
     y: number;
     headWidth:number;
     headHeight:number;
-    tears:Tear[]
-    playerStats:Object
+    tears:Tear[];
+    playerStats:PlayerStats;
+    tearManager:TearManager;
     movementObject: Actions; // Jest tutaj aby nie wywalało błędu, dla playera nie ma potrzeby bo ma obiekt globalny
+    hitboxX: number;
+    hitboxY: number;
 
     constructor(tears:Tear[]) {
         this.tears= tears
-        this.x = 10
+        this.tearManager = new TearManager(this.tears)
+        this.x = 100
         this.y = 200
         this.vy = 0.3
         this.vx = 0.3
         //BODY OF PLAYER
         this.imageSource = new SpriteAnimator([new AnimationObjectCreate(issac,32,22,false,9,32,"walkDown",75),new AnimationObjectCreate(issac,32,22,false,9,32,"walkLeft",448,5),
         new AnimationObjectCreate(issac,32,22,false,9,32,"walkUp",405),new AnimationObjectCreate(issac,32,22,false,9,32,"walkRight",118)])
+        //HEAD OF PLAYER
         this.headSource = new SpriteAnimator([new AnimationObjectCreate(issac,39,34,false,1,40,"shotTearDown",20,4),new AnimationObjectCreate(issac,39,34,false,1,40,"shotTearRight",20,82),
         new AnimationObjectCreate(issac,39,34,false,1,40,"shotTearUp",20,162),new AnimationObjectCreate(issac,39,34,false,1,40,"shotTearLeft",20,243)])
         this.height = this.imageSource.spriteHeight +20
         this.width = this.imageSource.spriteWidth + 20
+        this.hitboxHeight= this.height - 20
+        this.hitboxWidth = this.width - 25
+        this.hitboxX = this.x 
+        this.hitboxY = this.y 
         this.headWidth = this.headSource.spriteWidth + 40
         this.headHeight = this.headSource.spriteHeight + 40
     }
@@ -54,6 +63,11 @@ export class Player implements EntityInterface,FaceEntity{
         //BODY
         this.imageSource.draw(ctx,this.x,this.y,this.width,this.height)
         this.headSource.draw(ctx,this.x-9,this.y-46,this.headWidth,this.headHeight)
+        //FIXME:DEBUG
+        ctx.beginPath()
+        ctx.rect(this.hitboxX,this.hitboxY,this.hitboxWidth,this.hitboxHeight)
+        ctx.stroke()
+        //FIXME:DEBUG
     }
 
     /**
@@ -74,6 +88,9 @@ export class Player implements EntityInterface,FaceEntity{
         else this.imageSource.update(delta)
 
 
+        //HITBOX
+        this.updateHitboxPosition()
+
         //SHOTING
         if(ShotActionObject.DOWN) this.headSource.update(delta,"shotTearDown")
         else if(ShotActionObject.UP) this.headSource.update(delta,"shotTearUp")
@@ -81,6 +98,11 @@ export class Player implements EntityInterface,FaceEntity{
         else if(ShotActionObject.RIGHT) this.headSource.update(delta,"shotTearRight")
         else this.headSource.update(delta)
 
+        this.tearManager.update(delta,this.x,this.y)
+    }
 
+    private updateHitboxPosition(){
+        this.hitboxX = this.x + 8
+        this.hitboxY = this.y + 5
     }
 }
