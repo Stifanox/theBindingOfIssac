@@ -1,5 +1,6 @@
 import { Collider } from "./Classes/Collider";
 import { Enemy } from "./Classes/Enemy";
+import { EnemyFollower } from "./Classes/EnemyFollower";
 import { KeyboardControler } from "./Classes/KeyboardControler";
 import { Player } from "./Classes/Player";
 import { Rock } from "./Classes/Rock";
@@ -19,9 +20,13 @@ export class Game implements Animation{
     collider:Collider
     constructor(ctx:CanvasRenderingContext2D){
         this.ctx = ctx
-        this.enemies = []
+        //FIXME: DEBUG STATIC ENEMY
+        this.enemies = [new EnemyFollower()]
+        //FIXME: DEBUG STATIC ENEMY
         this.tears = []
-        this.objects = [new Rock()]
+        //FIXME: DEBUG STATIC ROCK
+        this.objects = [new Rock(500,300),new Rock(150,150)]
+        //FIXME: DEBUG STATIC ROCK
         this.player= new Player(this.tears)
         this.collider = new Collider(this.player,this.enemies,this.objects,this.tears)
         this.keyboardControler = new KeyboardControler(MovementActionObject,ShotActionObject)
@@ -55,6 +60,7 @@ export class Game implements Animation{
 
         this.player.update(delta)
         this.enemies.forEach(enemy =>{
+            if(enemy.markForDeletion) this.enemies.splice(this.enemies.indexOf(enemy),1)
             enemy.update(delta)
         })
         this.tears.forEach(tear =>{

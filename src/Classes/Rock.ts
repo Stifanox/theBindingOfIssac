@@ -15,10 +15,10 @@ export class Rock implements EntityInterface{
     hitboxX: number;
     hitboxY: number;
 
-    constructor() {
+    constructor(x:number,y:number) {
         //TODO:zaimpelemntować dynamiczne renderowanie rock
-        this.x= 300
-        this.y= 300
+        this.x= x
+        this.y= y
         this.width=70
         this.height=70
         this.hitboxX = this.x +2

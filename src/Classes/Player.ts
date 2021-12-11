@@ -31,14 +31,22 @@ export class Player implements EntityInterface,FaceEntity{
     movementObject: Actions; // Jest tutaj aby nie wywalało błędu, dla playera nie ma potrzeby bo ma obiekt globalny
     hitboxX: number;
     hitboxY: number;
+    canMove:Actions
 
     constructor(tears:Tear[]) {
+        this.playerStats ={
+            damage:3,
+            tears:1,
+            range:300,
+            shotSpeed:0.5,
+            speed:0.3
+        }
         this.tears= tears
-        this.tearManager = new TearManager(this.tears)
+        this.tearManager = new TearManager(this.tears,this.playerStats)
         this.x = 100
         this.y = 200
-        this.vy = 0.3
-        this.vx = 0.3
+        this.vy = 0
+        this.vx =0 
         //BODY OF PLAYER
         this.imageSource = new SpriteAnimator([new AnimationObjectCreate(issac,32,22,false,9,32,"walkDown",75),new AnimationObjectCreate(issac,32,22,false,9,32,"walkLeft",448,5),
         new AnimationObjectCreate(issac,32,22,false,9,32,"walkUp",405),new AnimationObjectCreate(issac,32,22,false,9,32,"walkRight",118)])
@@ -53,6 +61,13 @@ export class Player implements EntityInterface,FaceEntity{
         this.hitboxY = this.y 
         this.headWidth = this.headSource.spriteWidth + 40
         this.headHeight = this.headSource.spriteHeight + 40
+        this.canMove = {
+            UP:true,
+            DOWN:true,
+            LEFT:true,
+            RIGHT:true,
+        }
+        this.setInitialStats()
     }
 
     /**
@@ -76,11 +91,18 @@ export class Player implements EntityInterface,FaceEntity{
      */
     update(delta: number): void {
         //MOVEMENT
-        MovementActionObject.UP && PlayfieldSize.upperY < this.y ? this.y -= delta*this.vy: null
-        MovementActionObject.DOWN && PlayfieldSize.downY > this.y ?  this.y += delta*this.vy: null
-        MovementActionObject.LEFT && PlayfieldSize.downX < this.x ? this.x -= delta*this.vx: null
-        MovementActionObject.RIGHT && PlayfieldSize.upperX > this.x ? this.x += delta*this.vx: null
+        MovementActionObject.UP && PlayfieldSize.upperY  < this.y && this.canMove.UP? this.y -= delta*this.vy: null
+        MovementActionObject.DOWN && PlayfieldSize.downY > this.y && this.canMove.DOWN ?  this.y += delta*this.vy: null
+        MovementActionObject.LEFT && PlayfieldSize.downX < this.x && this.canMove.LEFT ? this.x -= delta*this.vx: null
+        MovementActionObject.RIGHT && PlayfieldSize.upperX > this.x && this.canMove.RIGHT ? this.x += delta*this.vx: null
+    
+        //Po sprawdzeniu czy występuje kolizja z przeciwnikiem ustawia wszystkie zmienne na true
+        this.canMove.UP = true
+        this.canMove.DOWN = true
+        this.canMove.LEFT= true
+        this.canMove.RIGHT= true
 
+        //MOVEMENT ANIMATION
         if(MovementActionObject.DOWN) this.imageSource.update(delta,"walkDown")
         else if(MovementActionObject.UP) this.imageSource.update(delta,"walkUp")
         else if(MovementActionObject.LEFT) this.imageSource.update(delta,"walkLeft")
@@ -92,8 +114,8 @@ export class Player implements EntityInterface,FaceEntity{
         this.updateHitboxPosition()
 
         //SHOTING
-        if(ShotActionObject.DOWN) this.headSource.update(delta,"shotTearDown")
-        else if(ShotActionObject.UP) this.headSource.update(delta,"shotTearUp")
+        if(ShotActionObject.UP) this.headSource.update(delta,"shotTearUp")
+        else if(ShotActionObject.DOWN) this.headSource.update(delta,"shotTearDown")
         else if(ShotActionObject.LEFT) this.headSource.update(delta,"shotTearLeft")
         else if(ShotActionObject.RIGHT) this.headSource.update(delta,"shotTearRight")
         else this.headSource.update(delta)
@@ -104,5 +126,10 @@ export class Player implements EntityInterface,FaceEntity{
     private updateHitboxPosition(){
         this.hitboxX = this.x + 8
         this.hitboxY = this.y + 5
+    }
+    
+    private setInitialStats(){
+        this.vx = this.playerStats.speed
+        this.vy = this.playerStats.speed
     }
 }

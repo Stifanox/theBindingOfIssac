@@ -27,6 +27,7 @@ export interface EntityInterface extends Position, Animation,Hitbox{
     imageSource:SpriteAnimator
     width:number
     height:number
+    canMove?:Actions
 }
 
 export interface Hitbox{

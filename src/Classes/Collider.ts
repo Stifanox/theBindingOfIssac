@@ -2,8 +2,9 @@ import { Animation, EntityInterface } from "../Utils/Interfaces";
 import { Enemy } from "./Enemy";
 import { Player } from "./Player";
 import { Tear } from "./Tear";
-import {collision} from "../Utils/UtilFunctions"
+import {collision, whichSideCollision} from "../Utils/UtilFunctions"
 import { PlayfieldHitbox } from "../Utils/PlayfiledSize";
+import { MovementActionObject } from "../Utils/Actions";
 
 export class Collider implements Animation{
     player:Player
@@ -30,7 +31,22 @@ export class Collider implements Animation{
         
         this.objects.forEach(object =>{
             //Collision object <-> player
-            if(collision(object,this.player)) {}
+            if(collision(object,this.player)) {
+                switch(whichSideCollision(this.player,object)){
+                    case "Left":
+                        this.player.canMove.LEFT =false                        
+                    break
+                    case "Right":
+                        this.player.canMove.RIGHT =false
+                    break
+                    case "Top":
+                        this.player.canMove.UP = false
+                    break
+                    case "Bottom":
+                        this.player.canMove.DOWN = false
+                    break
+                }
+            }
         })
 
         this.tears.forEach(tear =>{
@@ -44,6 +60,13 @@ export class Collider implements Animation{
             if(!collision(PlayfieldHitbox,tear)){
                 tear.markToDelete()
             }
+
+            this.enemies.forEach(enemy =>{
+                if(collision(tear,enemy)){
+                    tear.markToDelete()
+                    enemy.dealDamage(tear)
+                }   
+            })
         })
     }
 }
