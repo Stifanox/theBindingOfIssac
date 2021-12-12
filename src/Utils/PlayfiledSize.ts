@@ -11,5 +11,5 @@ export const PlayfieldHitbox:Hitbox ={
     hitboxWidth: 790,
     hitboxHeight: 435,
     hitboxX: 100,
-    hitboxY: 110
+    hitboxY: 100
 }

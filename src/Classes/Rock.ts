@@ -21,20 +21,15 @@ export class Rock implements EntityInterface{
         this.y= y
         this.width=70
         this.height=70
-        this.hitboxX = this.x +2
-        this.hitboxY = this.y +2
-        this.hitboxHeight = this.height-5
-        this.hitboxWidth = this.width-5
+        this.hitboxX = this.x +7
+        this.hitboxY = this.y +7
+        this.hitboxHeight = this.height-13
+        this.hitboxWidth = this.width-15
         this.imageSource = new SpriteAnimator([new AnimationObjectCreate(rock,32,32,true,0,0,"static",0,0)])
     }
 
     draw(ctx?: CanvasRenderingContext2D): void {
         this.imageSource.draw(ctx,this.x,this.y,this.width,this.height)
-        //FIXME:DEBUG
-        ctx.beginPath()
-        ctx.rect(this.hitboxX,this.hitboxY,this.hitboxWidth,this.hitboxHeight)
-        ctx.stroke()
-        //FIXME:DEBUG
     }
 
     update(): void {}

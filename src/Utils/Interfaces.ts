@@ -1,4 +1,6 @@
+import { Door } from "../Classes/Door";
 import { SpriteAnimator } from "../Classes/SpriteAnimator";
+import { Enemy } from "./Enemy";
 
 /**
  * Basic interface for position
@@ -12,8 +14,8 @@ export interface Position{
  * Basic interface for animation 
  */
 export interface Animation{
-    draw(ctx?:CanvasRenderingContext2D): void 
-    update(delta:number): void
+    draw(ctx?:CanvasRenderingContext2D): void ;
+    update(delta:number): void;
 }
 
 /**
@@ -54,7 +56,9 @@ export interface SpriteAnimation{
     frameX:number
     frames:number
     staticObject:boolean
-    heightOfSource:number
+}
+export interface EnemyUpdate{
+    update(delta:number,playerX:number,playerY:number):void
 }
 export interface KeyMap{
     UP:number
@@ -87,8 +91,22 @@ export interface PlayerStats{
     range:number;
     shotSpeed:number;
     speed:number;   
+    health:number;
+    currentHealth:number
 }
 
 export interface Removeable{
     markForDeletion:boolean
+}
+
+export interface PlayerPickup{
+    coins:number
+    bombs:number
+    keys:number
+}
+export interface Room{
+    id:number;
+    enemies:Enemy[];
+    objects:EntityInterface[]
+    doors:Door[]
 }

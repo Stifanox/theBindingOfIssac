@@ -1,4 +1,4 @@
-import { Actions, EntityInterface, FaceEntity, PlayerStats} from "../Utils/Interfaces";
+import { Actions, EntityInterface, FaceEntity, PlayerPickup, PlayerStats} from "../Utils/Interfaces";
 import { SpriteAnimator } from "./SpriteAnimator";
 import issac from "../../Img/Issac_Sprite.png"
 import { MovementActionObject, ShotActionObject } from "../Utils/Actions";
@@ -31,20 +31,32 @@ export class Player implements EntityInterface,FaceEntity{
     movementObject: Actions; // Jest tutaj aby nie wywalało błędu, dla playera nie ma potrzeby bo ma obiekt globalny
     hitboxX: number;
     hitboxY: number;
-    canMove:Actions
+    canMove:Actions;
+    invincible:boolean;
+    playerPickup:PlayerPickup
 
     constructor(tears:Tear[]) {
         this.playerStats ={
             damage:3,
-            tears:1,
+            tears:500,
             range:300,
             shotSpeed:0.5,
-            speed:0.3
+            speed:0.3,
+            health:5,
+            //There is a bug when room is loaded half heart is missing. That's why there
+            currentHealth:5
         }
+
+        this.playerPickup ={
+            coins:10,
+            bombs:0,
+            keys:0
+        }
+
         this.tears= tears
         this.tearManager = new TearManager(this.tears,this.playerStats)
-        this.x = 100
-        this.y = 200
+        this.x = 480
+        this.y = 325
         this.vy = 0
         this.vx =0 
         //BODY OF PLAYER
@@ -67,6 +79,8 @@ export class Player implements EntityInterface,FaceEntity{
             LEFT:true,
             RIGHT:true,
         }
+
+        this.invincible = false
         this.setInitialStats()
     }
 
@@ -113,7 +127,7 @@ export class Player implements EntityInterface,FaceEntity{
         //HITBOX
         this.updateHitboxPosition()
 
-        //SHOTING
+        //SHOOTING
         if(ShotActionObject.UP) this.headSource.update(delta,"shotTearUp")
         else if(ShotActionObject.DOWN) this.headSource.update(delta,"shotTearDown")
         else if(ShotActionObject.LEFT) this.headSource.update(delta,"shotTearLeft")
@@ -131,5 +145,15 @@ export class Player implements EntityInterface,FaceEntity{
     private setInitialStats(){
         this.vx = this.playerStats.speed
         this.vy = this.playerStats.speed
+    }
+
+    takeDamage():void{
+        if(!this.invincible){
+            this.invincible = true
+            this.playerStats.currentHealth -= .5
+            setTimeout(() =>{
+                this.invincible =false
+            },1500)
+        }
     }
 }

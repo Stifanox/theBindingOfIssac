@@ -14,7 +14,6 @@ export class SpriteAnimator implements SpriteAnimation{
     frames: number;
     staticObject: boolean;
     internalTimer:number
-    heightOfSource: number;
     offsetYStart: number;
     offsetXStart:number;
     offsetOfFrame:number
@@ -87,8 +86,12 @@ export class SpriteAnimator implements SpriteAnimation{
         this.staticObject = animationObject.staticObject
         this.offsetYStart = animationObject.offsetYStart
         this.offsetXStart = animationObject.offsetXStart
-
     }
-
+    
+    changeSpriteSource(source:string){
+        const img = new Image(this.spriteWidth,this.spriteHeight)
+        img.src = source
+        this.imageSource = img
+    }
     //TODO:napisać metodę która będzie zmieniać wartość szybkości odgrywania animacji
 }
