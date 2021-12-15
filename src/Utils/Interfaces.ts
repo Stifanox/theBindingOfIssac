@@ -1,6 +1,10 @@
 import { Door } from "../Classes/Door";
+import { DoorBoss } from "../Classes/DoorBoss";
+import { DoorTresure } from "../Classes/DoorTresure";
 import { SpriteAnimator } from "../Classes/SpriteAnimator";
 import { Enemy } from "./Enemy";
+import { Item } from "./Item";
+import { Pickup } from "./Pickup";
 
 /**
  * Basic interface for position
@@ -97,6 +101,7 @@ export interface PlayerStats{
 
 export interface Removeable{
     markForDeletion:boolean
+    markToDelete():void
 }
 
 export interface PlayerPickup{
@@ -108,5 +113,11 @@ export interface Room{
     id:number;
     enemies:Enemy[];
     objects:EntityInterface[]
-    doors:Door[]
+    doors:(Door|DoorTresure|DoorBoss)[]
+    items:Item[],
+    pickups:Pickup[]
+}
+export interface Music{
+    audio:HTMLAudioElement
+    playMusic():void
 }

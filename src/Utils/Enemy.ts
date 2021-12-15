@@ -1,10 +1,9 @@
-import { Actions, EntityInterface, Removeable } from "./Interfaces";
+import { Actions, EntityInterface, Music, Removeable } from "./Interfaces";
 import { SpriteAnimator } from "../Classes/SpriteAnimator";
 import { Tear } from "../Classes/Tear";
+import death_music from "../../assets/enemydeath.mp3"
 
-//TODO: zrobić klasę faceEnemy
-//TODO: zrobić metodę która będzie odejmować zdrowie przeciwnika 
-export abstract class Enemy implements EntityInterface,Removeable{
+export abstract class Enemy implements EntityInterface,Removeable,Music{
     markForDeletion: boolean;
     vx: number;
     vy: number;
@@ -18,8 +17,15 @@ export abstract class Enemy implements EntityInterface,Removeable{
     hitboxX: number;
     hitboxY: number;
     health:number
+    maxHealth:number
     canMove?: Actions;
-
+    isFlying:boolean
+    movementObject:Actions
+    canHaveKnockback:boolean
+    type:string
+    added:boolean
+    audio: HTMLAudioElement;
+    
     constructor(vx: number, vy: number, imageSource: SpriteAnimator, x: number, y: number, health:number) {
             this.vx=vx
             this.vy=vy
@@ -35,6 +41,7 @@ export abstract class Enemy implements EntityInterface,Removeable{
             this.x=x
             this.y=y
             this.health = health
+            this.maxHealth = health
             this.markForDeletion = false
             this.canMove ={
                 UP:true,
@@ -42,6 +49,23 @@ export abstract class Enemy implements EntityInterface,Removeable{
                 LEFT:true,
                 RIGHT:true,
             }
+            this.movementObject ={
+                UP:false,
+                DOWN:false,
+                LEFT:false,
+                RIGHT:false,
+            }
+            this.isFlying = false
+            this.canHaveKnockback =true
+            this.added = false
+            this.audio = new Audio(death_music)
+    }
+    playMusic(): void {
+        this.audio.play()
+    }
+
+    markToDelete(): void {
+        this.markForDeletion = true
     }
   
 
@@ -55,7 +79,10 @@ export abstract class Enemy implements EntityInterface,Removeable{
     }
 
     update(delta: number,playerX?:number,playerY?:number): void {
-        if(this.health < 0) this.markForDeletion = true
+        if(this.health < 0) {
+            this.markToDelete()
+            this.playMusic()
+        }
         this.canMove.DOWN=true
         this.canMove.UP=true
         this.canMove.LEFT=true
@@ -64,7 +91,7 @@ export abstract class Enemy implements EntityInterface,Removeable{
 
     dealDamage(tear:Tear){
         this.health -= tear.damage
-        
+        if(!this.canHaveKnockback) return
         if(tear.vx){
             if(tear.vx>0) this.x +=10
             else this.x -=10

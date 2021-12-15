@@ -6,7 +6,7 @@ import fatty_enemy from "../../Img/fatty_enemy.png";
 export class EnemyFatty extends FaceEnemy{
 
     constructor(x:number,y:number) {
-        super(40,0.2,0.2,new SpriteAnimator([new AnimationObjectCreate(fatty_enemy,64,38,false,11,64,"walkLeft",109,0),new AnimationObjectCreate(fatty_enemy,64,38,false,11,64,"walkRight",49,0),new AnimationObjectCreate(fatty_enemy,64,38,false,11,64,"walkDown",175,0)]),x,y,30)
+        super(40,0.05,0.05,new SpriteAnimator([new AnimationObjectCreate(fatty_enemy,64,38,false,11,64,"walkLeft",109,0),new AnimationObjectCreate(fatty_enemy,64,38,false,11,64,"walkRight",49,0),new AnimationObjectCreate(fatty_enemy,64,38,false,11,64,"walkDown",175,0)]),x,y,30)
 
         this.headSource = new SpriteAnimator([new AnimationObjectCreate(fatty_enemy,32,32,false,5,32,"headPlay",0,0)])
         this.width += 50

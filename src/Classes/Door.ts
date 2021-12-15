@@ -45,11 +45,6 @@ export class Door implements EntityInterface{
 
     draw(ctx?: CanvasRenderingContext2D): void {
         this.imageSource.draw(ctx,this.x,this.y,this.width,this.height)
-        //FIXME:DEBUG
-        ctx.beginPath()
-        ctx.rect(this.hitboxX,this.hitboxY,this.hitboxWidth,this.hitboxHeight)
-        ctx.stroke()
-        //FIXME:DEBUG
     }
 
     update(delta: number,enemiesCount?:number): void {
@@ -95,7 +90,7 @@ export class Door implements EntityInterface{
                 player.y = 500
             break
             case "down":
-                player.y = 120
+                player.y = 130
             break
             case "left":
                 player.x=830

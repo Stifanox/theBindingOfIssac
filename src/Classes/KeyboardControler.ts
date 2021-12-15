@@ -1,12 +1,16 @@
 import { KeyMap, Actions } from "../Utils/Interfaces";
+import { PlantedBomb } from "./PlantedBomb";
+import { Player } from "./Player";
 
 export class KeyboardControler{
     keyMapMovement:KeyMap
     keyMapShot:KeyMap
     movementAction:Actions
     shotAction:Actions
+    player:Player
+    bombObjects:PlantedBomb[]
 
-    constructor(movementAction:Actions,shotAction:Actions){
+    constructor(movementAction:Actions,shotAction:Actions,player:Player,bombObjects:PlantedBomb[]){
         this.keyMapMovement ={
             UP:87,
             DOWN:83,
@@ -20,13 +24,24 @@ export class KeyboardControler{
             LEFT:37,
             RIGHT:39
         }
-
+        this.player = player
         this.movementAction = movementAction
         this.shotAction = shotAction
+        this.bombObjects = bombObjects
+        document.addEventListener("keypress",this.setBombOnField.bind(this))
         document.addEventListener("keydown",this.addMovement.bind(this))
         document.addEventListener("keyup",this.removeMovement.bind(this))
         document.addEventListener("keydown",this.addShot.bind(this))
         document.addEventListener("keyup",this.removeShot.bind(this))
+    }
+
+    setBombOnField(e:KeyboardEvent){
+        if(e.keyCode == 101){
+            if(this.player.playerPickup.bombs > 0 ){
+                this.bombObjects.push(new PlantedBomb(this.player.x,this.player.y))
+                this.player.playerPickup.bombs -= 1
+            }
+        }
     }
 
     addMovement(e:KeyboardEvent):void{

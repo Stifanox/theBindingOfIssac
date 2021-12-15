@@ -4,3 +4,5 @@ package-lock.json
 *.webp
 *.psd
 *.txt
+*.jpg
+*.jpeg

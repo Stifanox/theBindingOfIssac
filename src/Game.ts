@@ -3,18 +3,22 @@ import { Enemy } from "./Utils/Enemy";
 
 import { KeyboardControler } from "./Classes/KeyboardControler";
 import { Player } from "./Classes/Player";
-import { Rock } from "./Classes/Rock";
 import { Tear } from "./Classes/Tear";
 import { MovementActionObject, ShotActionObject } from "./Utils/Actions";
-import { Animation, EntityInterface } from "./Utils/Interfaces";
-import { EnemyFatty } from "./Classes/EnemyFatty";
-import { EnemyFollower } from "./Classes/EnemyFollower";
+import { Animation, EntityInterface, Music } from "./Utils/Interfaces";
 import { GUI } from "./Classes/GUI";
 import { MapGeneration } from "./Utils/MapGeneration";
 import { Door } from "./Classes/Door";
+import { Item } from "./Utils/Item";
+import { enemies } from "./Utils/Floor";
+import { DoorTresure } from "./Classes/DoorTresure";
+import { Pickup } from "./Utils/Pickup";
+import { DoorBoss } from "./Classes/DoorBoss";
+import { PlantedBomb } from "./Classes/PlantedBomb";
+import { Rock } from "./Classes/Rock";
+import soundtrack from "../assets/sacrificial.mp3"
 
-//FIXME: Później generować kamienie w innej klasie
-export class Game implements Animation{
+export class Game implements Animation,Music{
     
     keyboardControler:KeyboardControler
     ctx:CanvasRenderingContext2D
@@ -22,37 +26,49 @@ export class Game implements Animation{
     enemies: Enemy[]
     tears:Tear[]
     objects: EntityInterface[]
-    doors:Door[]
+    doors:(Door|DoorTresure|DoorBoss)[]
+    items:Item[]
+    pickups:Pickup[]
     collider:Collider
     GUI:GUI
     mapGenerator:MapGeneration
-    constructor(ctx:CanvasRenderingContext2D){
+    showPopup:boolean
+    itemName:string;
+    bombObjects:PlantedBomb[]
+    audio: HTMLAudioElement;
+    isPlayed:boolean
 
-        let string:string 
-        for(let i=1;i<12; i++){
-            string += `new Rock(${100+(i*65)},100),`
-        }
+    constructor(ctx:CanvasRenderingContext2D){
         
         this.ctx = ctx
-        //FIXME: DEBUG STATIC ENEMY
-        this.enemies = []
-        //FIXME: DEBUG STATIC ENEMY
+        this.enemies = enemies
         this.tears = []
-        //FIXME: DEBUG STATIC ROCK
         this.objects = []
-        //FIXME: DEBUG STATIC ROCK
-        this.doors = [new Door("down",1),new Door("up",1),new Door("left",1),new Door("right",1)]
+        this.doors = []
+        this.items = []
+        this.pickups = []
+        this.bombObjects = []
         this.player= new Player(this.tears)
-        this.mapGenerator = new MapGeneration(this.enemies,this.objects,this.doors)
-        this.collider = new Collider(this.player,this.enemies,this.objects,this.tears,this.doors,this.mapGenerator)
-        this.keyboardControler = new KeyboardControler(MovementActionObject,ShotActionObject)
-        this.GUI = new GUI(this.player.playerStats,this.player.playerPickup)
-        
-        //require to have Minecraft font downloaded
-        this.ctx.fillStyle = "white"
-        this.ctx.font = "25px Minecraft"
-        
+        this.mapGenerator = new MapGeneration(this.enemies,this.objects,this.doors,this.items,this.pickups,this.tears,this.bombObjects)
+        this.keyboardControler = new KeyboardControler(MovementActionObject,ShotActionObject,this.player,this.bombObjects)
+        this.GUI = new GUI(this.player.playerStats,this.player.playerPickup,this.ctx,this.enemies)
+        this.collider = new Collider(this.player,this.enemies,this.objects,this.tears,this.doors,this.items,this.mapGenerator,this.GUI,this.showItemPopup.bind(this),this.pickups,this.bombObjects)
         this.mapGenerator.loadRoom(1)
+
+        this.showPopup = false
+
+        this.itemName = ""
+        this.ctx.font = "25px upheavtt"
+        this.ctx.fillStyle = "white"
+        this.audio = new Audio(soundtrack)
+        this.audio.loop = true
+        this.audio.volume = 0.05
+        this.isPlayed = false
+    }
+
+    playMusic(): void {
+        this.audio.play().then(res => this.isPlayed=true)
+        .catch(err => {})
     }
     
     /**
@@ -60,16 +76,20 @@ export class Game implements Animation{
      */
     draw(): void {
         this.doors.forEach(door => door.draw(this.ctx))
-        this.enemies.forEach(enemy =>{
-            enemy.draw(this.ctx)
-        })
-        this.tears.forEach(tear =>{
-            tear.draw(this.ctx)
-        })
+        
         this.objects.forEach(object =>{
             object.draw(this.ctx)
         })
-        
+        this.pickups.forEach(pickem => pickem.draw(this.ctx))
+
+        this.tears.forEach(tear =>{
+            tear.draw(this.ctx)
+        })
+        this.enemies.forEach(enemy =>{
+            enemy.draw(this.ctx)
+        })
+        this.items.forEach(item => item.draw(this.ctx))
+        this.bombObjects.forEach(bomb => bomb.draw(this.ctx))
         this.player.draw(this.ctx)
 
         this.GUI.draw(this.ctx)
@@ -78,22 +98,76 @@ export class Game implements Animation{
      * Updates all possible entities
      * @param delta Time between two rendered frames
      */
-    update(delta:number): void {
+    update(delta:number,requestId?:number): void {
+        if(!this.isPlayed){
+            this.playMusic()
+        }
         this.collider.update()
 
         this.player.update(delta)
+
         this.enemies.forEach(enemy =>{
-            if(enemy.markForDeletion) this.enemies.splice(this.enemies.indexOf(enemy),1)
+            if(enemy.markForDeletion) {
+                //End the game
+                if(enemy.constructor.name == "BossDukeOfFly"){
+                    this.ctx.fillStyle ="black"
+                    this.ctx.fillRect(0,0,1000,650)
+                    this.ctx.fillStyle ="white"
+                    this.ctx.fillText("You have won",100,100)
+                    cancelAnimationFrame(requestId)
+                }else{
+                this.enemies.splice(this.enemies.indexOf(enemy),1)
+
+                }
+            }
             enemy.update(delta,this.player.x,this.player.y)
         })
+
         this.tears.forEach(tear =>{
             if(tear.markForDeletion) this.tears.splice(this.tears.indexOf(tear),1)
             tear.update(delta)
         })
         this.doors.forEach(door => door.update(delta,this.enemies.length))
-        this.GUI.update(delta)
 
+        this.items.forEach(item => {
+            if(item.markForDeletion) this.items.splice(this.items.indexOf(item),1)
+            item.update(delta)
+        })
+        this.bombObjects.forEach(bomb =>{
+            if(bomb.markForDeletion) this.bombObjects.splice(this.bombObjects.indexOf(bomb),1)
+            bomb.update(delta)
+        })
+
+        this.GUI.update(delta)
+        
+        this.objects.forEach(object =>{
+            if(object.constructor.name =="Rock"){
+                if((object as Rock).markForDeletion) this.objects.splice(this.objects.indexOf(object),1)
+            }  
+        })
+        if(this.showPopup){
+            this.GUI.showPickedItem(this.itemName)
+        }   
+        this.pickups.forEach(pickup => {
+            if(pickup.markForDeletion) this.pickups.splice(this.pickups.indexOf(pickup),1)
+            pickup.update(delta,this.enemies.length)
+        })
+        
         //Death of player
-        if(this.player.playerStats.currentHealth <= 0) {}
+        if(this.player.playerStats.currentHealth <= 0) {
+            this.ctx.fillStyle ="black"
+            this.ctx.fillRect(0,0,1000,650)
+            this.ctx.fillStyle ="white"
+            this.ctx.fillText("You died",100,100)
+            cancelAnimationFrame(requestId)
+        }
+    }
+
+    showItemPopup(itemName:string){
+        this.itemName = itemName
+        this.showPopup = true
+        setTimeout(()=>{
+            this.showPopup = false
+        },2000)
     }
 }

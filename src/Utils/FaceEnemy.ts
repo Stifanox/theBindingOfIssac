@@ -1,30 +1,25 @@
 import { SpriteAnimator } from "../Classes/SpriteAnimator";
 import { Enemy } from "./Enemy";
-import { Actions, FaceEntity } from "./Interfaces";
+import { FaceEntity } from "./Interfaces";
 import { PlayfieldSize } from "./PlayfiledSize";
 
 export abstract class FaceEnemy extends Enemy implements FaceEntity{
     headSource: SpriteAnimator;
     headWidth: number;
     headHeight: number;
-    movementObject: Actions;
     offsetOfBottomSize:number
+    multi:number
+
     constructor(offsetOfBottomSize:number,vx: number, vy: number, imageSource: SpriteAnimator, x: number, y: number, health:number) {
         super(vx,vy,imageSource,x,y,health)
         this.offsetOfBottomSize=offsetOfBottomSize
-        this.movementObject ={
-            UP:false,
-            DOWN:false,
-            LEFT:false,
-            RIGHT:false,
-        }
+        this.multi = vx
     }
     
 
 
     // update(delta:number): void;
     update(delta: number,playerX?:number,playerY?:number): void {
-        //FIXME:potem ustawiać offset dynamicznie 
         this.howToMove(playerX,playerY);
 
         (this.canMove.LEFT && this.vx<0) || (this.canMove.RIGHT && this.vx>0) && this.x+this.offsetOfBottomSize < PlayfieldSize.upperX  ? this.x += delta*this.vx : null;
@@ -36,8 +31,8 @@ export abstract class FaceEnemy extends Enemy implements FaceEntity{
     protected howToMove(playerX:number,playerY:number){
         const angle = Math.atan2(playerY - this.y,playerX - this.x) 
 
-        this.vx = Math.cos(angle) * 0.15
-        this.vy = Math.sin(angle) * 0.15
+        this.vx = Math.cos(angle) * this.multi
+        this.vy = Math.sin(angle) * this.multi
 
         if(Math.abs(this.vx) > Math.abs(this.vy)){
             if(this.vx < 0 ){

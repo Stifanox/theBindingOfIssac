@@ -1,4 +1,4 @@
-import { Actions, EntityInterface, FaceEntity, PlayerPickup, PlayerStats} from "../Utils/Interfaces";
+import { Actions, EntityInterface, FaceEntity, Music, PlayerPickup, PlayerStats} from "../Utils/Interfaces";
 import { SpriteAnimator } from "./SpriteAnimator";
 import issac from "../../Img/Issac_Sprite.png"
 import { MovementActionObject, ShotActionObject } from "../Utils/Actions";
@@ -6,12 +6,14 @@ import { AnimationObjectCreate } from "./AnimationObjectCreate";
 import { PlayfieldSize } from "../Utils/PlayfiledSize";
 import { Tear } from "./Tear";
 import { TearManager } from "./TearManager";
+import { Pickup } from "../Utils/Pickup";
+import player_dmg from "../../assets/playerdmg.wav"
 
 /**
  * Main class of player.
  * @implements EntityInterface
  */
-export class Player implements EntityInterface,FaceEntity{
+export class Player implements EntityInterface,FaceEntity,Music{
    
     vx: number;
     vy: number;
@@ -34,6 +36,7 @@ export class Player implements EntityInterface,FaceEntity{
     canMove:Actions;
     invincible:boolean;
     playerPickup:PlayerPickup
+    audio: HTMLAudioElement;
 
     constructor(tears:Tear[]) {
         this.playerStats ={
@@ -42,9 +45,8 @@ export class Player implements EntityInterface,FaceEntity{
             range:300,
             shotSpeed:0.5,
             speed:0.3,
-            health:5,
-            //There is a bug when room is loaded half heart is missing. That's why there
-            currentHealth:5
+            health:4,
+            currentHealth:4
         }
 
         this.playerPickup ={
@@ -81,7 +83,12 @@ export class Player implements EntityInterface,FaceEntity{
         }
 
         this.invincible = false
-        this.setInitialStats()
+        this.setSpeed()
+        this.audio = new Audio(player_dmg)
+    }
+    
+    playMusic(): void {
+        this.audio.play()
     }
 
     /**
@@ -92,11 +99,6 @@ export class Player implements EntityInterface,FaceEntity{
         //BODY
         this.imageSource.draw(ctx,this.x,this.y,this.width,this.height)
         this.headSource.draw(ctx,this.x-9,this.y-46,this.headWidth,this.headHeight)
-        //FIXME:DEBUG
-        ctx.beginPath()
-        ctx.rect(this.hitboxX,this.hitboxY,this.hitboxWidth,this.hitboxHeight)
-        ctx.stroke()
-        //FIXME:DEBUG
     }
 
     /**
@@ -142,18 +144,54 @@ export class Player implements EntityInterface,FaceEntity{
         this.hitboxY = this.y + 5
     }
     
-    private setInitialStats(){
+    private setSpeed(){
         this.vx = this.playerStats.speed
         this.vy = this.playerStats.speed
     }
 
     takeDamage():void{
         if(!this.invincible){
+            this.playMusic()
             this.invincible = true
             this.playerStats.currentHealth -= .5
             setTimeout(() =>{
                 this.invincible =false
             },1500)
+        }
+    }
+
+    updateStats(playerStats:PlayerStats,playerPickup:PlayerPickup){
+        this.playerStats.currentHealth += playerStats.currentHealth
+        this.playerStats.health += playerStats.health
+        this.playerStats.damage += playerStats.damage
+        this.playerStats.range += playerStats.range
+        this.playerStats.shotSpeed += playerStats.shotSpeed
+        this.playerStats.speed += playerStats.speed
+        this.playerStats.tears -= playerStats.tears
+
+        this.playerPickup.bombs += playerPickup.bombs
+        this.playerPickup.keys += playerPickup.keys
+        this.playerPickup.coins += playerPickup.coins
+        this.setSpeed()
+    }
+
+    addPickup(pickup:Pickup){
+        switch(pickup.type){
+            case "coin":
+                this.playerPickup.coins += 1
+            break
+            case "bomb":
+                this.playerPickup.bombs += 1
+            break
+            case "key":
+                this.playerPickup.keys += 1
+            break
+            case "heart":
+                if(this.playerStats.currentHealth < this.playerStats.health ){
+                    if(this.playerStats.health - this.playerStats.currentHealth == .5) this.playerStats.currentHealth += .5
+                    else this.playerStats.currentHealth += 1
+                } 
+            break
         }
     }
 }

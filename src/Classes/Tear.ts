@@ -1,10 +1,11 @@
 type velocityType = "up"|"down"|"left"|"right"
 
-import { EntityInterface, PlayerStats, Removeable } from "../Utils/Interfaces";
+import { EntityInterface, Music, PlayerStats, Removeable } from "../Utils/Interfaces";
 import { AnimationObjectCreate } from "./AnimationObjectCreate";
 import { SpriteAnimator } from "./SpriteAnimator";
 import tear from "../../Img/one_tear.png"
-export class Tear implements EntityInterface,Removeable{
+import tear_splat from "../../assets/splat.wav"
+export class Tear implements EntityInterface,Removeable,Music{
     vx: number;
     vy: number;
     imageSource: SpriteAnimator;
@@ -21,13 +22,14 @@ export class Tear implements EntityInterface,Removeable{
     damage:number
     range:number;
     distanceTraveled:number
+    audio: HTMLAudioElement;
 
     static UP:velocityType = "up"
     static DOWN:velocityType  = "down"
     static LEFT:velocityType  = "left"
     static RIGHT:velocityType  = "right"
 
-    constructor(tearVelocity:velocityType,playerX:number,playerY:number,playerStats:PlayerStats) {
+    constructor(tearVelocity:velocityType,playerX:number,playerY:number,playerStats:PlayerStats,) {
         this.playerStats = playerStats
         this.vx=0
         this.vy=0
@@ -46,15 +48,16 @@ export class Tear implements EntityInterface,Removeable{
         this.x= playerX
         this.y= playerY
         this.setStatsOfTear(tearVelocity)
+        this.audio = new Audio(tear_splat)
+        this.audio.volume = 0.1
+    }
+
+    playMusic(): void {
+       this.audio.play()
     }
     
     draw(ctx?: CanvasRenderingContext2D): void {
         this.imageSource.draw(ctx,this.x,this.y,this.width,this.height)
-        //FIXME:DEBUG
-        ctx.beginPath()
-        ctx.rect(this.hitboxX,this.hitboxY,this.hitboxWidth,this.hitboxHeight)
-        ctx.stroke()
-        //FIXME:DEBUG
     }
     update(delta: number): void {
         this.x += delta * this.vx
@@ -107,5 +110,6 @@ export class Tear implements EntityInterface,Removeable{
 
     markToDelete(){
         this.markForDeletion = true
+        this.playMusic()
     }
 }

@@ -6,7 +6,7 @@ import { AnimationObjectCreate } from "./AnimationObjectCreate";
 export class EnemyFollower extends FaceEnemy{
 
     constructor(x:number,y:number) {
-        super(0,0.2,0.2,new SpriteAnimator([new AnimationObjectCreate(enemy_follower,32,22,false,9,32,"walkDown",75),new AnimationObjectCreate(enemy_follower,32,22,false,9,32,"walkLeft",448,5),
+        super(0,0.15,0.15,new SpriteAnimator([new AnimationObjectCreate(enemy_follower,32,22,false,9,32,"walkDown",75),new AnimationObjectCreate(enemy_follower,32,22,false,9,32,"walkLeft",448,5),
         new AnimationObjectCreate(enemy_follower,32,22,false,9,32,"walkUp",405),new AnimationObjectCreate(enemy_follower,32,22,false,9,32,"walkRight",118)]),x,y,10)
 
         this.headSource = new SpriteAnimator([new AnimationObjectCreate(enemy_follower,39,34,true,0,40,"static",20,4)])

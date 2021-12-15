@@ -12,8 +12,7 @@ const ctx = canvas.getContext("2d")
 
 let previoseTime:number = 0
 const game:Game = new Game(ctx)
-
-//FIXME: później dynamicznie zmieniać background w jakieś klasie żeby był pokój
+let request:number = null
 function animate(timestamp:number){
     //rysuje pokój jako tło
     ctx.clearRect(0,0,canvas.width,canvas.height)
@@ -21,8 +20,8 @@ function animate(timestamp:number){
     const delta = timestamp - previoseTime
     previoseTime = timestamp 
     game.draw()
-    game.update(delta)
-    requestAnimationFrame(animate)
+    request = requestAnimationFrame(animate)
+    game.update(delta,request)
 }
 
 animate(0)

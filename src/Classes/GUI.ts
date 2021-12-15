@@ -5,14 +5,25 @@ import empty_heart from "../../Img/empty_heart.png"
 import bomb from "../../Img/bomb.png"
 import coin from "../../Img/coin.png"
 import key from "../../Img/key.png"
+import background_item from "../../Img/item_pick_background.png"
+import boss_bar from "../../Img/boss_bar.png"
+import { Enemy } from "../Utils/Enemy";
+
 export class GUI implements Animation{
 
     playerStats:PlayerStats;
     playerPickup:PlayerPickup
-
-    constructor(playerStats:PlayerStats,playerPickup:PlayerPickup){
+    ctx:CanvasRenderingContext2D
+    showItemPopup:Function
+    enemies:Enemy[]
+    bossBar: HTMLImageElement;
+    constructor(playerStats:PlayerStats,playerPickup:PlayerPickup,ctx:CanvasRenderingContext2D,enemies:Enemy[]){
         this.playerPickup = playerPickup
         this.playerStats = playerStats
+        this.ctx = ctx
+        this.enemies = enemies
+        this.bossBar = new Image(100,100)
+        this.bossBar.src = boss_bar
     }
 
     draw(ctx?: CanvasRenderingContext2D): void {
@@ -20,10 +31,25 @@ export class GUI implements Animation{
         this.manageCoins(ctx)
         this.manageBombs(ctx)
         this.manageKeys(ctx)
+        this.manageBoss(ctx)
     }
 
     update(delta: number): void {}
     
+    private manageBoss(ctx:CanvasRenderingContext2D){
+        this.enemies.forEach(enemy =>{
+            if(enemy.type == "boss") this.drawHealth(ctx,enemy)
+        })
+    }
+
+    private drawHealth(ctx:CanvasRenderingContext2D,enemy:Enemy){
+        ctx.save()
+        ctx.fillStyle ="red"
+        ctx.fillRect(380,540,252*(enemy.health/enemy.maxHealth),25)
+        ctx.drawImage(this.bossBar,340,520,300,70)
+        ctx.restore()
+    }
+
     private manageHearts(ctx: CanvasRenderingContext2D){
         const fullHearts = Math.trunc(this.playerStats.currentHealth)
         const halfHeart = this.playerStats.currentHealth % 1 != 0? true : false
@@ -71,5 +97,14 @@ export class GUI implements Animation{
         img.src = key
         ctx.drawImage(img,47,175,20,30)
         ctx.fillText(`${this.playerPickup.keys}`,80,202)
+    }
+
+    showPickedItem(itemName:string){
+        const img = new Image(0,0)
+        const messure= this.ctx.measureText(itemName)
+        const left = (1000-messure.width)/2
+        img.src = background_item
+        this.ctx.drawImage(img,50,55,900,100)
+        this.ctx.fillText(itemName,left,110)
     }
 }
