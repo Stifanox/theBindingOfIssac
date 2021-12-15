@@ -54,11 +54,6 @@ export abstract class Item implements EntityInterface,Removeable{
 
     draw(ctx?: CanvasRenderingContext2D): void {
         this.imageSource.draw(ctx,this.x,this.y,this.width,this.height)
-        // //FIXME:DEBUG
-        ctx.beginPath()
-        ctx.rect(this.hitboxX,this.hitboxY,this.hitboxWidth,this.hitboxHeight)
-        ctx.stroke()
-        //FIXME:DEBUG
     }
 
     update(delta: number): void {
