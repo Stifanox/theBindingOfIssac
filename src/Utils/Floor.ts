@@ -43,7 +43,7 @@ export const floor:Room[] = [
     },
     {
         id:3,
-        enemies:[],
+        enemies:[new EnemyFatty(200,200), new EnemyFollower(750,200)],
         objects:[new Rock(100,100),new Rock(100,162),new Rock(100,224),new Rock(100,224),new Rock(100,348),new Rock(100,410),new Rock(100,472)
         ,new Rock(165,100),new Rock(230,100),new Rock(295,100),new Rock(360,100),new Rock(555,100),new Rock(620,100),new Rock(685,100),new Rock(750,100),new Rock(815,100)
         ,new Rock(165,472),new Rock(230,472),new Rock(295,472),new Rock(360,472),new Rock(555,472),new Rock(620,472),new Rock(685,472),new Rock(750,472),new Rock(815,472),
