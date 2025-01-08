@@ -1,7 +1,8 @@
 const path = require('path');
 module.exports = {
     entry: {
-        script: './main.ts',
+        script: './entries/main.ts',
+        editor: './entries/editor.ts',
     },
     output: {
         path: path.resolve(__dirname, './dist'),
@@ -26,6 +27,10 @@ module.exports = {
         ]
     },
     resolve: {
+        alias:{
+            '@img': path.resolve(__dirname, 'Img'),
+            '@assets': path.resolve(__dirname, 'assets'),
+        },
         extensions: ['.tsx', '.ts', '.js']
     },
     watch: true

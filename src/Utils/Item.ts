@@ -1,5 +1,5 @@
-import { AnimationObjectCreate } from "../Classes/AnimationObjectCreate";
-import { SpriteAnimator } from "../Classes/SpriteAnimator";
+import { AnimationObjectCreate } from "../Classes/Animation/AnimationObjectCreate";
+import { SpriteAnimator } from "../Classes/Animation/SpriteAnimator";
 import { Actions, EntityInterface, PlayerPickup, PlayerStats, Removeable } from "./Interfaces";
 
 export abstract class Item implements EntityInterface,Removeable{

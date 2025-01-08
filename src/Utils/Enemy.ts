@@ -1,6 +1,6 @@
 import { Actions, EntityInterface, Music, Removeable } from "./Interfaces";
-import { SpriteAnimator } from "../Classes/SpriteAnimator";
-import { Tear } from "../Classes/Tear";
+import { SpriteAnimator } from "../Classes/Animation/SpriteAnimator";
+import { Tear } from "../Classes/Player/Tear";
 import death_music from "../../assets/enemydeath.mp3"
 
 export abstract class Enemy implements EntityInterface,Removeable,Music{

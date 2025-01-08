@@ -1,4 +1,4 @@
-import { SpriteAnimator } from "../Classes/SpriteAnimator";
+import { SpriteAnimator } from "../Classes/Animation/SpriteAnimator";
 import { Enemy } from "./Enemy";
 import { FaceEntity } from "./Interfaces";
 import { PlayfieldSize } from "./PlayfiledSize";

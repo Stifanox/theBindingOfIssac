@@ -1,8 +1,8 @@
-import { Door } from "../Classes/Door";
-import { DoorBoss } from "../Classes/DoorBoss";
-import { DoorTresure } from "../Classes/DoorTresure";
-import { PlantedBomb } from "../Classes/PlantedBomb";
-import { Tear } from "../Classes/Tear";
+import { BaseDoor } from "../Classes/Doors/BaseDoor";
+import { DoorBoss } from "../Classes/Doors/DoorBoss";
+import { DoorTreasure } from "../Classes/Doors/DoorTreasure";
+import { PlantedBomb } from "../Classes/Pickups/PlantedBomb";
+import { Tear } from "../Classes/Player/Tear";
 import { Enemy } from "./Enemy";
 import { floor } from "./Floor";
 import { EntityInterface, Room } from "./Interfaces";
@@ -13,12 +13,12 @@ export class MapGeneration{
     floor:Room[]
     enemies:Enemy[]
     objects:EntityInterface[]
-    doors:(Door|DoorTresure|DoorBoss)[]
+    doors:(BaseDoor|DoorTreasure|DoorBoss)[]
     items:Item[]
     pickups:Pickup[]
     tears:Tear[]
     bombObjects:PlantedBomb[]
-    constructor(enemies:Enemy[],objects:EntityInterface[],doors:(Door|DoorTresure|DoorBoss)[],items:Item[],pickups:Pickup[],tears:Tear[],bombObjects:PlantedBomb[]) {
+    constructor(enemies:Enemy[],objects:EntityInterface[],doors:(BaseDoor|DoorTreasure|DoorBoss)[],items:Item[],pickups:Pickup[],tears:Tear[],bombObjects:PlantedBomb[]) {
         this.floor = floor
         this.enemies = enemies
         this.objects = objects

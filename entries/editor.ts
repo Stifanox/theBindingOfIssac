@@ -1,6 +1,6 @@
-import { Game } from "./src/Game"
-import basementRoom from "./Img/basement_one_room.png"
-const canvas = document.querySelector("#game") as HTMLCanvasElement
+import { Game } from "../src/Game"
+import basementRoom from "@img/basement_one_room.png"
+const canvas = document.querySelector("#editor") as HTMLCanvasElement
 canvas.width = 1000
 canvas.height = 650
 
@@ -18,7 +18,7 @@ function animate(timestamp:number){
     ctx.clearRect(0,0,canvas.width,canvas.height)
     ctx.drawImage(img,0,0,canvas.width,canvas.height)
     const delta = timestamp - previoseTime
-    previoseTime = timestamp 
+    previoseTime = timestamp
     game.draw()
     request = requestAnimationFrame(animate)
     game.update(delta,request)

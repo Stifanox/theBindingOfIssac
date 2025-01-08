@@ -1,4 +1,4 @@
-import { SpriteAnimator } from "../Classes/SpriteAnimator";
+import { SpriteAnimator } from "../Classes/Animation/SpriteAnimator";
 import { Actions, EntityInterface, Music, Removeable } from "./Interfaces";
 
 type pickup = "bomb"|"coin"|"key"|"heart"
