@@ -24,7 +24,7 @@ export class EnemyFollower extends FaceEnemy {
 
     }
 
-    update(delta: number, playerX: number, playerY: number): void {
+    update(delta: number, playerX?: number, playerY?: number): void {
         super.update(delta, playerX, playerY)
         this.headSource.update(delta)
         super.updateHitboxPosition(5, -this.headSource.spriteHeight)
