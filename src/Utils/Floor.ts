@@ -27,7 +27,7 @@ export const floor: Room[] = [
         id: 1,
         enemies: [],
         objects: [new Spikes(110, 105), new Rock(155, 95), new Spikes(840, 105), new Rock(775, 95), new Spikes(110, 490), new Rock(155, 480), new Spikes(840, 490), new Rock(775, 480)],
-        doors: [new BaseDoor("left", 2), new DoorTreasure('right', 4, true)],
+        doors: [new BaseDoor("left", 2)],
         items: [],
         pickups: [new Heart(200, 200), new Coin(300, 300)]
     },

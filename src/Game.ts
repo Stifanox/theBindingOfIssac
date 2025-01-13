@@ -37,8 +37,9 @@ export class Game implements Animation, Music {
     bombObjects: PlantedBomb[]
     audio: HTMLAudioElement;
     isPlayed: boolean
+    private static gameInstance?: Game = null
 
-    constructor(ctx: CanvasRenderingContext2D) {
+    private constructor(ctx: CanvasRenderingContext2D) {
 
         this.ctx = ctx
         this.enemies = enemies
@@ -66,6 +67,15 @@ export class Game implements Animation, Music {
         this.isPlayed = false
     }
 
+    public static getInstance(ctx?: CanvasRenderingContext2D) {
+        if (Game.gameInstance !== null) {
+            return Game.gameInstance
+        } else {
+            Game.gameInstance = new Game(ctx)
+            return Game.gameInstance
+        }
+    }
+
     playMusic(): void {
         this.audio.play()
     }
@@ -79,7 +89,7 @@ export class Game implements Animation, Music {
         this.objects.forEach(object => {
             object.draw(this.ctx)
         })
-        this.pickups.forEach(pickem => pickem.draw(this.ctx))
+        this.pickups.forEach(pickup => pickup.draw(this.ctx))
 
         this.tears.forEach(tear => {
             tear.draw(this.ctx)
